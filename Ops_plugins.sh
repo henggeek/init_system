@@ -308,9 +308,7 @@ EOF
 
 crontab_env() {
     # crontab
-    [ -f /var/spool/cron/crontabs/root ] && cron_file="/var/spool/cron/crontabs/root"
-    [ -f /var/spool/cron/root ] && cron_file="/var/spool/cron/root"
-    cat > ${cron_file}<<-EOF
+    cat >/var/spool/cron/root<<-EOF
 # Example of job definition:
 # .---------------- minute (0 - 59)
 # |  .------------- hour (0 - 23)
