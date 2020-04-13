@@ -69,7 +69,8 @@ security_env(){
     sed -ri 's/#Port 22/Port 23451/g' /etc/ssh/sshd_config                            
     #sed -ri 's/PermitRootLogin\s+yes/PermitRootLogin no/g' /etc/ssh/sshd_config        
     #sed -ri 's/PasswordAuthentication\s+yes/PasswordAuthentication no/g' /etc/ssh/sshd_config  
-    
+    systemctl enable sshd && systemctl restart sshd
+
 	 lock_user=(
     `grep -oP "^[a-zA-Z]+(-[a-zA-Z]+)?(?=\:)" /etc/passwd |grep -Ev "root|ops|jenkins|dev|dev-manage|www|qa|ziztour"`
     )
