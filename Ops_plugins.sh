@@ -350,10 +350,10 @@ maven_env(){
     [ -d /data/appdir/maven ] && echoRed "检测到/data/appdir已经安装maven" && exit 1
     wget ${download_url}/maven/apache-maven-3.3.9-bin.tar.gz -O /tmp/apache-maven-3.3.9-bin.tar.gz && cd /tmp
      tar -xzvf /tmp/apache-maven-3.3.9-bin.tar.gz -C /data/appdir/ && ln -s /data/appdir/apache-maven-3.3.9 /data/appdir/maven
-    sed -i '146a \\t<mirror>\n\t\t<id>nexus-aliyun</id>\n\t\t<name>Nexus aliyun</name>\n\t\t<url>http://maven.aliyun.com/nexus/content/groups/public</url>\n\t</mirror>' \
-    /data/appdir/maven/conf/settings.xml
+    # sed -i '146a \\t<mirror>\n\t\t<id>nexus-aliyun</id>\n\t\t<name>Nexus aliyun</name>\n\t\t<url>http://maven.aliyun.com/nexus/content/groups/public</url>\n\t</mirror>' \
+    # /data/appdir/maven/conf/settings.xml
 
-    echo "PATH=\$PATH:/data/appdir/maven" >> /etc/profile  && source /etc/profile
+    echo "PATH=\$PATH:/data/appdir/maven/bin" >> /etc/profile  && source /etc/profile
 
     /data/appdir/maven/bin/mvn -v &> /dev/null && echoGreen "maven安装完成..." || echoYellow "可能安装有问题，请检查..."
     rm -rf /tmp/maven*
@@ -946,13 +946,13 @@ redis_env(){
         make install 
     fi 
 
-    mkdir -p  /etc/redis/  && cp /data/appdir/redis-4.0.6/redis.conf /etc/redis/26379.conf
+    mkdir -p  /etc/redis/  && cp /data/appdir/redis-4.0.6/redis.conf /etc/redis/26379.conf && mkdir /data/appdir/redis-4.0.6/data
         sed -i   "s#^bind 127.0.0.1#bind 0.0.0.0 #g" /etc/redis/26379.conf
         sed -i   's#protected-mode yes#protected-mode no#g' /etc/redis/26379.conf 
         sed -i   's#port 6379#port 26379#g' /etc/redis/26379.conf 
         sed -i   's#pidfile /var/run/redis_6379.pid#pidfile /var/run/redis_26379.pid#g'  /etc/redis/26379.conf
         sed -i   's#daemonize no#daemonize yes#g'  /etc/redis/26379.conf
-        sed -i   's#dir ./#dir /data/data/redis/#g'  /etc/redis/26379.conf
+        sed -i   's#dir ./#dir /data/appdir/redis-4.0.6/data#g'  /etc/redis/26379.conf
         #sed -i '$a  requirepass ziz123321_2019' /etc/redis/26379.conf
 
     \cp /data/appdir/redis-4.0.6/utils/redis_init_script /etc/init.d/redis
