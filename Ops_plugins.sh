@@ -234,7 +234,7 @@ EOF
 	# 开机启动文件权限
 	chmod +x /etc/rc.d/rc.local
 	# selinux配置
-	sed '/^SELINUX=/c SELINUX=disabled' /etc/selinux/config
+	sed  -i '/^SELINUX=/c SELINUX=disabled' /etc/selinux/config
 }
 
 
@@ -330,8 +330,7 @@ EOF
 jdk_env (){
     [ -L /data/appdir/jdk ] && echoRed "检测到jdk已安装，退出安装" && exit 1  
     cd /tmp &&  wget ${download_url}/java/jdk-8u231-linux-x64.tar.gz -O /tmp/jdk-8u231-linux-x64.tar.gz
-    tar -xzvf /tmp/jdk-8u231-linux-x64.tar.gz -C /data/appdir
-    ln -s /data/appdir/jdk1.8.0_231  /data/appdir/jdk
+    tar -xzvf /tmp/jdk-8u231-linux-x64.tar.gz -C /data/appdir && mv  /data/appdir/jdk1.8.0_231 /data/appdir/jdk
 
 cat >> /etc/profile<<-EOF
 JAVA_HOME=/data/appdir/jdk
@@ -349,7 +348,7 @@ rm -rf /tmp/jdk*
 maven_env(){
     [ -d /data/appdir/maven ] && echoRed "检测到/data/appdir已经安装maven" && exit 1
     wget ${download_url}/maven/apache-maven-3.3.9-bin.tar.gz -O /tmp/apache-maven-3.3.9-bin.tar.gz && cd /tmp
-     tar -xzvf /tmp/apache-maven-3.3.9-bin.tar.gz -C /data/appdir/ && ln -s /data/appdir/apache-maven-3.3.9 /data/appdir/maven
+     tar -xzvf /tmp/apache-maven-3.3.9-bin.tar.gz -C /data/appdir/ && mv /data/appdir/apache-maven-3.3.9 /data/appdir/maven
     # sed -i '146a \\t<mirror>\n\t\t<id>nexus-aliyun</id>\n\t\t<name>Nexus aliyun</name>\n\t\t<url>http://maven.aliyun.com/nexus/content/groups/public</url>\n\t</mirror>' \
     # /data/appdir/maven/conf/settings.xml
 
@@ -365,8 +364,7 @@ tomcat_env() {
     [ ${totle_mem} -lt 3568 ] && echoRed "检测到内存不足4G，退出安装" && exit 2
     [ -L /data/appdir/apache-tomcat ] && echoRed "检测到/data/appdir/下已经安装了tomcat，退出安装" && rm -rf /tmp/apache-tomcat* && exit 3
     wget ${download_url}/tomcat/apache-tomcat-8.5.31.tar.gz -O /tmp/apache-tomcat-8.5.31.tar.gz
-    tar -xzvf /tmp/apache-tomcat-8.5.31.tar.gz -C /data/appdir
-    ln -s /data/appdir/apache-tomcat-8.5.31/ /data/appdir/apache-tomcat
+    tar -xzvf /tmp/apache-tomcat-8.5.31.tar.gz -C /data/appdir && mv  /data/appdir/apache-tomcat-8.5.31/ /data/appdir/apache-tomcat
 
     rm -rf /data/appdir/apache-tomcat/webapps/*
     echo 'JAVA_OPTS="$JAVA_OPTS -Djsse.enableSNIExtension=true -Dfile.encoding=UTF-8 -XX:InitialHeapSize=3568M -XX:MaxHeapSize=3568M -XX:NewSize=512M -XX:+UseParallelGC -XX:+UseParallelOldGC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/apache-tomcat/heapdump.hprof"' >>/data/appdir/apache-tomcat/bin/setenv.sh
@@ -795,7 +793,7 @@ cat > /etc/my.cnf << EOF
        
     interactive_timeout = 28800
     wait_timeout = 28800
-    sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+    sql_mode='NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
        
     [mysqldump]
     quick
@@ -985,7 +983,7 @@ rabbitmq_env(){
 mongodb_env(){
     [ -L /data/appdir/mongodb ]  && echoRed "检测到/data/appdir已经安装mongodb" && exit 1
     cd /tmp/ && wget ${download_url}/mongodb/mongodb-linux-x86_64-rhel70-4.0.3.tgz  && tar -xf mongodb-linux-x86_64-rhel70-4.0.3.tgz -C /data/appdir/
-    ln -s /data/appdir/mongodb-linux-x86_64-rhel70-4.0.3 /data/appdir/mongodb
+    mv /data/appdir/mongodb-linux-x86_64-rhel70-4.0.3 /data/appdir/mongodb
     mkdir -p /data/appdir/mongodb/mongodb_data && mkdir -p /data/logs/mondodb_log && mkdir -p /etc/mongodb
 
 # mongodb config 
