@@ -1045,6 +1045,22 @@ EOF
     rm -rf /tmp/Python*
 }
 
+solr_env(){
+    [ -L /data/appdir/solr ] && echoRed "检测到sorl已安装，退出安装" && exit 1  
+    cd /tmp &&  wget ${download_url}/sorl/solr-7.7.2.tgz -O /tmp/solr-7.7.2.tgz
+    tar -xzvf /tmp/solr-7.7.2.tgz -C /data/appdir && mv  /data/appdir/solr-7.7.2 /data/appdir/solr && cp /data/appdir/solr/bin/init.d/solr /etc/init.d/solr
+    sed -i 's/^#SOLR_ULIMIT_CHECKS=.*/SOLR_ULIMIT_CHECKS=false/' /data/appdir/solr/bin/solr.in.sh
+    sed -i 's/^SOLR_INSTALL_DIR.*/SOLR_INSTALL_DIR=\/data\/appdir\/solr\//' /etc/init.d/solr
+    sed -i 's/^SOLR_ENV=.*/SOLR_ENV=\/data\/appdir\/solr\/bin\/solr.in.sh/' /etc/init.d/solr
+    groupadd solr && useradd -g solr solr && chown -R solr.solr /data/appdir/solr
+
+    echo "PATH=\$PATH:/data/appdir/solr/bin" >> /etc/profile  && source /etc/profile
+    /data/appdir/solr/bin/solr -v &> /dev/null && echoGreen "sorl安装完成..." || echoYellow "可能安装有问题，请检查..."
+    rm -rf /tmp/solr*
+
+}
+
+
 change_hostname(){
     CHANGENAME=$(whiptail --title "更改主机名" --inputbox "请输入新的主机名，用-来连接" 10 60 `hostname` 3>&1 1>&2 2>&3)
     exitstatus=$?
@@ -1198,7 +1214,8 @@ install_soft(){
         "11" "rabbitmq-3.7.7" \
         "12" "rsyncd" \
         "13" "mysql5.7" \
-        "14" "supervisor-3.4" 3>&1 1>&2 2>&3 )
+        "14" "supervisor-3.4" \
+        "15" "solr-7.7.2" 3>&1 1>&2 2>&3 )
     case $OPTION in 
     1) 
         A && openresty_env
@@ -1241,6 +1258,9 @@ install_soft(){
         ;;
     14) 
         A && supervisor_env
+        ;;
+    15) 
+        A && solr_env
         ;;
     *)
         run_go
