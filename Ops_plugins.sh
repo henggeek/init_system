@@ -606,7 +606,7 @@ php_env(){
     id www >& /dev/null
     [ $? -ne 0 ] && echo "用户www未不存在,创建www用户..." && /usr/sbin/useradd  www  -u 1100
     [ -d /appdir/data/appdir/php ] && echoRed "检测到/appdir/data/下已安装php，故而退出！" && rm -rf $dir && exit 1
-    yum install -y zlib-devel libxml2-devel libjpeg-turbo-devel libpng-devel gd-devel libiconv-devel freetype-devel libcurl-devel libxslt-devel openssl-devel readline-devel php-mcrypt  libmcrypt  libmcrypt-devel gc
+    yum install -y zlib-devel libxml2-devel libjpeg-turbo-devel libpng-devel gd-devel libiconv-devel freetype-devel libcurl-devel libxslt-devel openssl-devel readline-devel php-mcrypt  libmcrypt  libmcrypt-devel gc openldap-devel
     
     wget ${download_url}/php/libiconv-1.15.tar.gz -O /tmp/libiconv-1.15.tar.gz && cd /tmp
         tar -xf libiconv-1.15.tar.gz &&  cd libiconv-1.15
