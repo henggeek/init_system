@@ -679,7 +679,7 @@ EOF
     sed -i   "/^error_reporting/c error_reporting = E_WARNING \& E_ERROR" /data/appdir/php/etc/php.ini
 
     # php_path
-    echo "PATH=\$PATH:/data/appdir/php/bin/" >> /etc/profile   && /etc/profile
+    echo "PATH=\$PATH:/data/appdir/php/bin/" >> /etc/profile   && source /etc/profile
     systemctl enable php-fpm.service && systemctl start php-fpm.service 
 
     /data/appdir/php/bin/php -v &> /dev/bull && echoGreen "PHP 已经安装完成...."   || echoYellow "可能安装有问题，请检查...."
